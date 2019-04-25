@@ -17,29 +17,73 @@
 </head>
 
 <body>
+    <div id="container" style="width:700px;height:700px;background-color:#000"></div>
     <script src="./Three.js"></script>
     <script>
+        var container = document.getElementById('container')
+        
+        //创建场景
         var scene = new THREE.Scene();
-        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-
+        
+        //创建摄像机
+        var camera = new THREE.PerspectiveCamera(
+            45,//fov — 摄像机视锥体垂直视野角度
+            container.offsetWidth / container.offsetHeight,//aspect — 摄像机视锥体长宽比
+            1,//near — 摄像机视锥体近端面
+            10//far — 摄像机视锥体远端面
+        );
+        
+        //创建渲染器
         var renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
+        renderer.setSize(container.offsetWidth, container.offsetHeight);
+        
+        container.appendChild(renderer.domElement);
 
-        var geometry = new THREE.BoxGeometry(1, 1, 1);
+        //创建立方几何体
+        var cubegeometry = new THREE.BoxGeometry(
+            1,//width — X轴上面的宽度，默认值为1
+            1,//height — Y轴上面的高度，默认值为1
+            1//depth — Z轴上面的深度，默认值为1
+        );
+
+        var circlegeometry = new THREE.SphereGeometry(
+            1,
+            8,
+            8
+        );
+
+        //创建基础网格材质
         var material = new THREE.MeshBasicMaterial({
-            color: 0xffffff
+            color: 0xf2e2f2//材质的颜色(Color)，默认值为白色 (0xffffff)
         });
-        var cube = new THREE.Mesh(geometry, material);
+
+        //创建网格物体
+        var cube = new THREE.Mesh(
+            cubegeometry,//Geometry或者BufferGeometry的实例，默认值是一个新的BufferGeometry
+            material//一个Material，或是一个包含有Material的数组，默认是一个新的MeshBasicMaterial
+        );
+
+        var circle = new THREE.Mesh(
+            circlegeometry,
+            material
+        );
+
+        //添加网格到场景
         scene.add(cube);
+        scene.add(circle);
 
+        //设置摄像机在场景中的位置
         camera.position.z = 5;
-
+        circle.position.y = 1;
+        cube.position.y = -1;
+        //WebAPI更新页面
         function animate() {
-            requestAnimationFrame(animate);
-            cube.rotation.x += 0.1;
-            cube.rotation.y += 0.1;
+            circle.rotation.x += 0.01;
+            circle.rotation.y += 0.01;
+            cube.rotation.x += 0.01;
+            cube.rotation.y += 0.01;
             renderer.render(scene, camera);
+            requestAnimationFrame(animate);
         }
         animate();
     </script>
